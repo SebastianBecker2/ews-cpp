@@ -23425,14 +23425,18 @@ namespace internal
                     auto mailbox_elem = res->first_node("t:Mailbox");
                     r.mailbox = mailbox::from_xml_element(*mailbox_elem);
                 }
+
                 if (compare("Contact", strlen("Contact"),
                             res->last_node()->local_name(),
                             res->last_node()->local_name_size()))
                 {
                     auto contact_elem = res->last_node("t:Contact");
-                    directory_id id(
-                        contact_elem->first_node("t:DirectoryId")->value());
-                    r.directory_id = id;
+                    auto id_elem = contact_elem->first_node("t:DirectoryId");
+                    if (id_elem)
+                    {
+                        directory_id id(id_elem->value());
+                        r.directory_id = id;
+                    }
                 }
 
                 resolutions.resolutions.emplace_back(r);
